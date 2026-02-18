@@ -1,10 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "researchsanity",
+  "name": "research-sanity",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "./src/server.ts",
   "vars": {
     "MY_VAR": "Hello from Cloudflare",
   },
+  "observability": {
+    "enabled": true
+  },
+  // "routes": [
+  //   {
+  //     "pattern": "researchsanity.com",
+  //     "custom_domain": true
+  //   }
+  // ]
 }
