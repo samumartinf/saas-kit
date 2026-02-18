@@ -1,11 +1,8 @@
-// DO NOT DELETE THIS FILE!!!
-// This file is a good smoke test to make sure the custom server entry is working
+// src/server.ts - TanStack Start Server Entry
 import { setAuth } from "@repo/data-ops/auth/server";
 import { initDatabase } from "@repo/data-ops/database/setup";
 import handler from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
-
-console.log("[server-entry]: using custom server entry in 'src/server.ts'");
 
 export default {
   fetch(request: Request) {
@@ -25,9 +22,10 @@ export default {
       },
       adapter: {
         drizzleDb: db,
-        provider: "mysql",
+        provider: "pg",
       },
     });
+
     return handler.fetch(request, {
       context: {
         fromFetch: true,
