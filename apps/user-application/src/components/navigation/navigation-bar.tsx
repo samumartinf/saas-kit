@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, Github, ExternalLink, LogIn } from "lucide-react";
+import { Menu, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,8 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme";
 import { authClient } from "@/lib/auth-client";
 import { AccountDialog } from "@/components/auth/account-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,22 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface NavigationItem {
   label: string;
   href: string;
-  isExternal?: boolean;
-  scrollTo?: string;
 }
 
 const navigationItems: NavigationItem[] = [
-  { label: "Features", href: "/#features", scrollTo: "features" },
-  {
-    label: "Documentation",
-    href: "/docs",
-    isExternal: false,
-  },
-  {
-    label: "GitHub",
-    href: "https://github.com/backpine/saas-kit",
-    isExternal: true,
-  },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "For VCs", href: "/#for-vcs" },
+  { label: "Early Access", href: "/#early-access" },
 ];
 
 export function NavigationBar() {
@@ -55,219 +43,288 @@ export function NavigationBar() {
     : user?.email?.charAt(0).toUpperCase() || "U";
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSmoothScroll = (elementId: string) => {
-    const element = document.getElementById(elementId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
-
-  const handleNavClick = (item: NavigationItem) => {
-    setIsOpen(false);
+  const navStyle: React.CSSProperties = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    transition: "background 0.4s ease, border-color 0.4s ease",
+    background: isScrolled ? "rgba(13,17,23,0.92)" : "transparent",
+    backdropFilter: isScrolled ? "blur(12px)" : "none",
+    borderBottom: isScrolled ? "1px solid rgba(245,240,232,0.08)" : "1px solid transparent",
   };
 
   return (
-    <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
-        isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5"
-          : "bg-transparent",
-      )}
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo and Brand */}
-          <Link
-            to="/"
-            className="group flex items-center space-x-3 no-underline"
-          >
-            <div className="flex flex-col">
-              <span className="text-lg lg:text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
-                SaaS Starter Kit
-              </span>
-              <span className="text-xs text-muted-foreground font-medium tracking-wider">
-                on CLOUDFLARE
-              </span>
-            </div>
-          </Link>
+    <nav style={navStyle}>
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0 1.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "68px",
+        }}
+      >
+        {/* Brand */}
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--rs-serif)",
+                fontSize: "1.2rem",
+                color: "var(--rs-paper)",
+                display: "block",
+                lineHeight: 1.1,
+              }}
+            >
+              ResearchSanity
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--rs-mono)",
+                fontSize: "0.55rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "var(--rs-amber)",
+                display: "block",
+              }}
+            >
+              Early Access
+            </span>
+          </div>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navigationItems.map((item) => (
-              <div key={item.label} className="relative group">
-                {item.isExternal ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
+        {/* Desktop nav */}
+        <div className="hidden lg:flex items-center gap-8">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.href}
+              style={{
+                fontFamily: "var(--rs-sans)",
+                fontSize: "0.85rem",
+                color: "rgba(245,240,232,0.55)",
+                textDecoration: "none",
+                transition: "color 0.2s ease",
+                letterSpacing: "0.01em",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = "var(--rs-paper)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = "rgba(245,240,232,0.55)";
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Auth — desktop */}
+        <div className="hidden lg:block">
+          {session ? (
+            <AccountDialog>
+              <button
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "4px",
+                }}
+              >
+                <Avatar className="h-7 w-7">
+                  <AvatarImage src={user?.image || undefined} alt={user?.name || "User"} />
+                  <AvatarFallback
+                    style={{
+                      background: "var(--rs-amber)",
+                      color: "var(--rs-ink)",
+                      fontSize: "0.7rem",
+                      fontFamily: "var(--rs-mono)",
+                    }}
                   >
-                    <span>{item.label}</span>
-                    {item.label === "GitHub" ? (
-                      <Github className="h-4 w-4" />
-                    ) : (
-                      <ExternalLink className="h-4 w-4" />
-                    )}
-                  </a>
-                ) : (
+                    {fallbackText}
+                  </AvatarFallback>
+                </Avatar>
+                <span
+                  style={{
+                    fontFamily: "var(--rs-sans)",
+                    fontSize: "0.85rem",
+                    color: "var(--rs-paper)",
+                  }}
+                >
+                  {user?.name || "Account"}
+                </span>
+              </button>
+            </AccountDialog>
+          ) : (
+            <button
+              onClick={handleGoogleSignIn}
+              className="inline-flex items-center gap-2 transition-colors duration-200"
+              style={{
+                fontFamily: "var(--rs-sans)",
+                fontSize: "0.82rem",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+                color: "var(--rs-ink)",
+                background: "var(--rs-amber)",
+                border: "none",
+                padding: "8px 18px",
+                borderRadius: "2px",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "var(--rs-amber-light)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = "var(--rs-amber)";
+              }}
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              Sign In
+            </button>
+          )}
+        </div>
+
+        {/* Mobile menu */}
+        <div className="lg:hidden">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                style={{ color: "var(--rs-paper)" }}
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              style={{
+                width: "280px",
+                background: "var(--rs-ink)",
+                borderLeft: "1px solid rgba(245,240,232,0.08)",
+              }}
+            >
+              <SheetHeader className="text-left pb-6">
+                <SheetTitle
+                  style={{
+                    fontFamily: "var(--rs-serif)",
+                    color: "var(--rs-paper)",
+                    fontSize: "1.3rem",
+                  }}
+                >
+                  ResearchSanity
+                </SheetTitle>
+                <SheetDescription
+                  style={{
+                    fontFamily: "var(--rs-mono)",
+                    fontSize: "0.6rem",
+                    letterSpacing: "0.15em",
+                    textTransform: "uppercase",
+                    color: "var(--rs-amber)",
+                  }}
+                >
+                  Research Intelligence Platform
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="flex flex-col gap-1 pb-6">
+                {navigationItems.map((item) => (
                   <Link
+                    key={item.label}
                     to={item.href}
-                    onClick={() => handleNavClick(item)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
+                    onClick={() => setIsOpen(false)}
+                    style={{
+                      fontFamily: "var(--rs-sans)",
+                      fontSize: "0.9rem",
+                      color: "rgba(245,240,232,0.65)",
+                      textDecoration: "none",
+                      padding: "10px 12px",
+                      borderRadius: "2px",
+                      display: "block",
+                    }}
                   >
                     {item.label}
                   </Link>
-                )}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-primary/80 transition-all duration-300 group-hover:w-3/4" />
+                ))}
               </div>
-            ))}
 
-            {/* Theme Toggle */}
-            <div className="ml-2 pl-2 border-l border-border/30">
-              <ThemeToggle variant="ghost" align="end" />
-            </div>
-          </div>
-
-          {/* Auth Button - Desktop */}
-          <div className="hidden lg:block">
-            {session ? (
-              <AccountDialog>
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2 px-3"
-                >
-                  <Avatar className="h-7 w-7">
-                    <AvatarImage
-                      src={user?.image || undefined}
-                      alt={user?.name || "User"}
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                      {fallbackText}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">
-                    {user?.name || "Account"}
-                  </span>
-                </Button>
-              </AccountDialog>
-            ) : (
-              <Button
-                onClick={handleGoogleSignIn}
-                variant="default"
-                className="gap-2"
+              <div
+                style={{ borderTop: "1px solid rgba(245,240,232,0.08)", paddingTop: "1.5rem" }}
               >
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            )}
-          </div>
-
-          {/* Mobile Menu Button + Theme Toggle */}
-          <div className="lg:hidden flex items-center space-x-2">
-            <ThemeToggle variant="ghost" align="end" />
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative h-10 w-10 hover:bg-accent/50"
-                >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Open navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50"
-              >
-                <SheetHeader className="text-left space-y-1 pb-6">
-                  <SheetTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                    Navigation
-                  </SheetTitle>
-                  <SheetDescription className="text-muted-foreground">
-                    Explore TanStack Start
-                  </SheetDescription>
-                </SheetHeader>
-
-                <div className="flex flex-col space-y-2 pb-6">
-                  {navigationItems.map((item) => (
-                    <div key={item.label} className="relative group">
-                      {item.isExternal ? (
-                        <a
-                          href={item.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span>{item.label}</span>
-                          {item.label === "GitHub" ? (
-                            <Github className="h-4 w-4" />
-                          ) : (
-                            <ExternalLink className="h-4 w-4" />
-                          )}
-                        </a>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          onClick={() => handleNavClick(item)}
-                          className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
-                        >
-                          {item.label}
-                        </Link>
-                      )}
+                {session ? (
+                  <div className="flex items-center gap-3 p-3">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={user?.image || undefined} alt={user?.name || "User"} />
+                      <AvatarFallback
+                        style={{
+                          background: "var(--rs-amber)",
+                          color: "var(--rs-ink)",
+                          fontFamily: "var(--rs-mono)",
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        {fallbackText}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p
+                        style={{
+                          fontFamily: "var(--rs-sans)",
+                          fontSize: "0.875rem",
+                          color: "var(--rs-paper)",
+                        }}
+                      >
+                        {user?.name || "User"}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: "var(--rs-mono)",
+                          fontSize: "0.65rem",
+                          color: "rgba(245,240,232,0.4)",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        {user?.email}
+                      </p>
                     </div>
-                  ))}
-                </div>
-
-                {/* Mobile Auth */}
-                <div className="pt-4 border-t border-border/50">
-                  {session ? (
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={user?.image || undefined}
-                          alt={user?.name || "User"}
-                        />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                          {fallbackText}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {user?.name || "User"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button
-                      onClick={handleGoogleSignIn}
-                      variant="default"
-                      className="w-full gap-2"
-                    >
-                      <LogIn className="h-4 w-4" />
-                      Sign In with Google
-                    </Button>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleGoogleSignIn}
+                    className="w-full inline-flex items-center justify-center gap-2"
+                    style={{
+                      fontFamily: "var(--rs-sans)",
+                      fontSize: "0.875rem",
+                      fontWeight: 600,
+                      color: "var(--rs-ink)",
+                      background: "var(--rs-amber)",
+                      border: "none",
+                      padding: "10px 18px",
+                      borderRadius: "2px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Sign In with Google
+                  </button>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>

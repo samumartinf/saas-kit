@@ -120,3 +120,84 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── ResearchSanity landing design system ─────────────────────── */
+
+:root {
+  --rs-ink:    #0d1117;
+  --rs-paper:  #f5f0e8;
+  --rs-amber:  #c8860a;
+  --rs-amber-light: #f0b840;
+  --rs-rule:   rgba(13, 17, 23, 0.12);
+  --rs-rule-paper: rgba(245, 240, 232, 0.15);
+  --rs-serif:  "DM Serif Display", Georgia, serif;
+  --rs-mono:   "DM Mono", "Courier New", monospace;
+  --rs-sans:   "DM Sans", system-ui, sans-serif;
+}
+
+/* Keyframes */
+@keyframes rs-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes rs-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes rs-line-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes rs-score-fill {
+  from { width: 0%; }
+  to   { width: var(--score-pct); }
+}
+@keyframes rs-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Animation utilities */
+.rs-animate-fade-up {
+  animation: rs-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.rs-animate-fade-in {
+  animation: rs-fade-in 0.6s ease both;
+}
+.rs-delay-1 { animation-delay: 0.1s; }
+.rs-delay-2 { animation-delay: 0.22s; }
+.rs-delay-3 { animation-delay: 0.34s; }
+.rs-delay-4 { animation-delay: 0.46s; }
+.rs-delay-5 { animation-delay: 0.58s; }
+.rs-delay-6 { animation-delay: 0.70s; }
+
+/* Noise texture overlay */
+.rs-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Score bar */
+.rs-score-bar {
+  height: 3px;
+  background: var(--rs-amber);
+  transform-origin: left;
+  animation: rs-score-fill 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+}
+
+/* Ticker */
+.rs-ticker-wrap {
+  overflow: hidden;
+}
+.rs-ticker-inner {
+  display: flex;
+  width: max-content;
+  animation: rs-ticker 28s linear infinite;
+}
+.rs-ticker-inner:hover {
+  animation-play-state: paused;
+}

@@ -10,10 +10,10 @@
   "observability": {
     "enabled": true
   },
-  // "routes": [
-  //   {
-  //     "pattern": "researchsanity.com",
-  //     "custom_domain": true
-  //   }
-  // ]
+  "routes": [
+    {
+      "pattern": "researchsanity.com",
+      "custom_domain": true
+    }
+  ]
 }
