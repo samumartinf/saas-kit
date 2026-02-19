@@ -7,7 +7,7 @@ export const polarMiddleware = createMiddleware({
 }).server(async ({ next }) => {
   const polar = new Polar({
     accessToken: env.POLAR_SECRET,
-    server: "sandbox",
+    server: "sandbox", // Change to production later 
   });
   return next({
     context: {

@@ -3,6 +3,7 @@ import { protectedFunctionMiddleware } from "@/core/middleware/auth";
 import { polarMiddleware } from "@/core/middleware/polar";
 import z from "zod";
 import { getRequestIP } from "@tanstack/react-start/server";
+import { env } from "cloudflare:workers";
 
 export const baseFunction = createServerFn().middleware([
   protectedFunctionMiddleware,
@@ -30,7 +31,7 @@ export const createPaymentLink = baseFunction
     const checkout = await ctx.context.polar.checkouts.create({
       products: [ctx.data.productId],
       externalCustomerId: ctx.context.userId,
-      successUrl: `http://localhost:3000/app/polar/checkout/success?checkout_id={CHECKOUT_ID}`,
+      successUrl: env.POLAR_SUCCESS_URL,
       customerIpAddress: ip,
       customerEmail: ctx.context.email,
     });
